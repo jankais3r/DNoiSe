@@ -14,6 +14,7 @@ pip install dnspython
 
 ## Recommended setup
 1. Run this on the same machine that hosts your pi-hole instance.
-2. Put this in your `crontab -e` to make it run after reboot
+2. Pair this with [dnscrypt-proxy](https://github.com/jedisct1/dnscrypt-proxy) or some other DNSCrypt/DoH client to make sure your ISP can't snoop on your queries.
+3. Put this in your `crontab -e` to make it run after reboot.
 `@reboot /usr/bin/python /home/pi/DNoiSe.py`
-3. That's all there is to it. The script will sample network activity every minute and add 10% extra DNS queries made randomly to Cisco's top 1M domain list.
+4. That's all there is to it. The script will sample network activity every minute and add 10% extra DNS queries made randomly to Cisco's top 1M domain list.
