@@ -103,6 +103,10 @@ exists = os.path.isfile(working_directory+"domains.sqlite")
 if exists == False:
 	download_domains()
 
+if auth == "90b03f6fc88f60ff24f4658bbb34c7332f6487b4bd279d0a69001b7f65dc935a":
+	print >> log_file, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.mktime(datetime.datetime.now().timetuple())))+" You forgot to put in the real auth token. Check the config section at the beginning of the script. Quitting."
+	exit()
+
 db = sqlite3.connect(working_directory+"domains.sqlite")
 
 while True:
@@ -124,9 +128,13 @@ while True:
 	
 	# When determining the rate of DNS queries on the network, we don't want our past fake queries to skew the statistics, therefore we filter out queries made by this machine.
 	genuine_queries = []
-	for a in parsed_all_queries["data"]:
-		if a[3] != client.replace("127.0.0.1","localhost"):
-			genuine_queries.append(a)
+	try:
+		for a in parsed_all_queries["data"]:
+			if a[3] != client.replace("127.0.0.1","localhost"):
+				genuine_queries.append(a)
+	except:
+		print >> log_file, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.mktime(datetime.datetime.now().timetuple())))+" Pi-hole API response in wrong format. Investigate."
+		exit()
 	
 	# Protection in case the pi-hole logs are empty.
 	if len(genuine_queries) == 0:
@@ -134,9 +142,13 @@ while True:
 	
 	# We want the types of our fake queries (A/AAA/PTR/…) to proportionally match those of the real traffic.
 	query_types = []
-	for a in parsed_all_queries["data"]:
-		if a[3] != client.replace("127.0.0.1","localhost"):
-			query_types.append(a[1])
+	try:
+		for a in parsed_all_queries["data"]:
+			if a[3] != client.replace("127.0.0.1","localhost"):
+				query_types.append(a[1])
+	except:
+		print >> log_file, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.mktime(datetime.datetime.now().timetuple())))+" Pi-hole API response in wrong format. Investigate."
+		exit()
 	
 	# Default to A request if pi-hole logs are empty
 	if len(query_types) == 0:
