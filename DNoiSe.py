@@ -55,9 +55,9 @@ def download_domains():
 		print >> log_file, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.mktime(datetime.datetime.now().timetuple())))+" Can't download the domain list. Quitting."
 		exit()
 	
-	# Create a SQLite database
+	# Create a SQLite database and import the domain list
 	try:
-		db = sqlite3.connect(working_directory+"domains.sqlite")
+		db = sqlite3.connect(working_directory + "domains.sqlite")
 		db.execute("CREATE TABLE Domains (ID INT PRIMARY KEY, Domain TEXT)")
 		
 		# Load the CSV into our database
@@ -67,7 +67,7 @@ def download_domains():
 	
 		db.close()
 	
-		os.remove(working_directory+"top-1m.csv")
+		os.remove(working_directory + "domains.zip")
 	except:
 		print >> log_file, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.mktime(datetime.datetime.now().timetuple())))+" Import failed. Quitting."
 		exit()
@@ -86,7 +86,7 @@ while True:
 		time.sleep(10)
 
 # Download the top 1M domain list if we don't have it yet.
-exists = os.path.isfile(working_directory+"domains.sqlite")
+exists = os.path.isfile(working_directory + "domains.sqlite")
 if exists == False:
 	download_domains()
 
